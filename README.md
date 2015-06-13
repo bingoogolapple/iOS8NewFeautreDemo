@@ -1,2 +1,3 @@
-# iOS8NewFeautreDemo
-iOS8NewFeautreDemo
+# iOS8NewFeautreNote
+
+iOS8新特性学习笔记
