@@ -12,6 +12,7 @@
 @interface ViewController ()<UIAlertViewDelegate, UIActionSheetDelegate>
 @property (nonatomic, weak) UITextField *test1Tf;
 @property (nonatomic, weak) UITextField *test2Tf;
+@property (weak, nonatomic) IBOutlet UISlider *slider;
 
 @end
 
@@ -30,7 +31,7 @@
     // UIAlertControllerStyleAlert
 //    UIAlertController *alert = [BGAAlertController alertControllerWithTitle:@"我是标题" message:@"我是消息" preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我是标题" message:@"我是消息" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我是标题" message:@"我是消息" preferredStyle:UIAlertControllerStyleActionSheet];
     
     // UIAlertActionStyleDefault = 0,
     // UIAlertActionStyleCancel,
@@ -66,22 +67,31 @@
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:[weakAlert.textFields firstObject]];
     }]];
     
-    // You can add a text field only if the preferredStyle property is set to UIAlertControllerStyleAlert.
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.textColor = [UIColor redColor];
-        textField.placeholder = @"用户名";
-        // 通过通知的方式监听UITextField文本变化需要在alert关闭时取消通知，比较麻烦
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(usernameDidChange:) name:UITextFieldTextDidChangeNotification object:textField];
-    }];
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.secureTextEntry = YES;
-        textField.placeholder = @"密码";
-        // 监听UITextField文本变化的最简单方法就是addTarget，不要用通知的方式
-        [textField addTarget:self action:@selector(pwdDidChange:) forControlEvents:UIControlEventEditingChanged];
-    }];
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder = @"短信验证码";
-    }];
+    
+    // 在iPad中使用UIAlertControllerStyleActionSheet时，必须使用popover的形式展示。在iPad中alert.modalPresentationStyle的默认值就是UIModalPresentationPopover，不用开发者手动指定
+    alert.modalPresentationStyle = UIModalPresentationPopover;
+    alert.popoverPresentationController.sourceView = self.slider;
+    alert.popoverPresentationController.sourceRect = self.slider.bounds;
+    alert.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionUp;
+    // 使用上面三项，或者下面这一项
+    // alert.popoverPresentationController.barButtonItem =
+    
+//    // You can add a text field only if the preferredStyle property is set to UIAlertControllerStyleAlert.
+//    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+//        textField.textColor = [UIColor redColor];
+//        textField.placeholder = @"用户名";
+//        // 通过通知的方式监听UITextField文本变化需要在alert关闭时取消通知，比较麻烦
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(usernameDidChange:) name:UITextFieldTextDidChangeNotification object:textField];
+//    }];
+//    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+//        textField.secureTextEntry = YES;
+//        textField.placeholder = @"密码";
+//        // 监听UITextField文本变化的最简单方法就是addTarget，不要用通知的方式
+//        [textField addTarget:self action:@selector(pwdDidChange:) forControlEvents:UIControlEventEditingChanged];
+//    }];
+//    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+//        textField.placeholder = @"短信验证码";
+//    }];
     
     
     [self presentViewController:alert animated:YES completion:nil];
